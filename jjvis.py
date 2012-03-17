@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Test for Razor 9DOF IMU
 # Jose Julio @2009
 # This script needs VPhyton, pyserial and pywin modules
@@ -21,7 +23,8 @@ grad2rad = 3.141592/180.0
 try:
     ser = serial.Serial(port='COM4',baudrate=57600, timeout=1)
 except serial.SerialException:
-    ser = open('screenlog.0', 'r')
+    #ser = open('screenlog.0', 'r')
+    ser = open('log-short.0', 'r')
 
 # Main scene
 scene=display(title="9DOF Razor IMU test")
@@ -86,19 +89,41 @@ roll=0
 pitch=0
 yaw=0
 while 1:
-    line = ser.readline()
-    line = line.replace("!RAW:","")   # Delete "!ANG:"
-    print line
-    f.write(line)                     # Write to the output log file
-    words = string.split(line,",")    # Fields split
-    if len(words) > 2:
-        try:
-            roll = float(words[0])*grad2rad
-            pitch = float(words[1])*grad2rad
-            yaw = float(words[2])*grad2rad
-        except:
-            print "Invalid line"
+    rate(10)
 
+    line = ser.readline()
+    #line = line.replace("!RAW:","")   # Delete "!ANG:"
+    #print line
+    #f.write(line)                     # Write to the output log file
+
+    # split line
+    s = line.split(' ')
+    d = dict()
+
+    # go through key/value pairs (i.e.: roll:3.4)
+    for token in s:
+        kv = token.split(':')
+        if(kv != -1 and len(kv) == 2):
+            d[kv[0]] = kv[1]
+
+    try:
+        roll = float(d['y'])
+    except KeyError:
+        roll = 0
+        ''' do nothing '''
+
+    pitch = 0
+    yaw = 0
+
+    #words = string.split(line," ")    # Fields split
+    #if len(words) > 2:
+    #    try:
+    #        roll = float(words[0])*grad2rad
+    #        pitch = float(words[1])*grad2rad
+    #        yaw = float(words[2])*grad2rad
+    #    except:
+    #        print "Invalid line"
+    if True:
         axis=(cos(pitch)*cos(yaw),-cos(pitch)*sin(yaw),sin(pitch)) 
         up=(sin(roll)*sin(yaw)+cos(roll)*sin(pitch)*cos(yaw),sin(roll)*cos(yaw)-cos(roll)*sin(pitch)*sin(yaw),-cos(roll)*cos(pitch))
         platform.axis=axis
@@ -115,8 +140,11 @@ while 1:
         cil_pitch.axis=(0.2*cos(pitch),0.2*sin(pitch),0)
         cil_pitch2.axis=(-0.2*cos(pitch),-0.2*sin(pitch),0)
         arrow_course.axis=(0.2*sin(yaw),0.2*cos(yaw),0)
-        L1.text = str(float(words[0]))
-        L2.text = str(float(words[1]))
-        L3.text = str(float(words[2]))        
+        L1.text = str(roll)
+        L2.text = str(pitch)
+        L3.text = str(yaw)        
+        #L1.text = str(float(words[0]))
+        #L2.text = str(float(words[1]))
+        #L3.text = str(float(words[2]))        
 ser.close
 f.close
