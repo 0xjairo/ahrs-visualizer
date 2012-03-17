@@ -7,6 +7,7 @@
 # Install pyserial from http://sourceforge.net/projects/pyserial/files/
 # Install Vphyton from http://vpython.org/contents/download_windows.html
 
+# downloaded from: http://edge.rit.edu/content/P11015/public/Visual%20Python%20for%20Gyroscope%20Utilization.py
 from visual import *
 import serial
 import string
