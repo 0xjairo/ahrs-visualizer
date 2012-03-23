@@ -1,5 +1,5 @@
 Original code
-=============
+-------------
 
 Downloaded on MAR-2012 from: 
 http://edge.rit.edu/content/P11015/public/Visual%20Python%20for%20Gyroscope%20Utilization.py
